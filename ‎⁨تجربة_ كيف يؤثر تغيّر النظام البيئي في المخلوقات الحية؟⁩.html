@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تجربة: كيف يؤثر تغيّر النظام البيئي في المخلوقات الحية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff6e0;--card:#ffffff;--ink:#3b2a1a;--soil:#7a4e2d;--leaf:#2f9e44;--sky:#d9f1ff;--sun:#ffc933;--bad:#e8503a;--line:#e5d3ae;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1a14;--card:#2a251c;--ink:#f6ead2;--sky:#24394a;--line:#4a4030}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Tajawal','Segoe UI',Tahoma,sans-serif;font-size:19px;line-height:1.7;min-height:100vh}
+#top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 16px}
+#track{height:14px;background:var(--line);border-radius:9px;overflow:hidden}
+#bar{height:100%;width:0;background:linear-gradient(90deg,var(--leaf),var(--sun));transition:width .5s}
+#lbl{font-weight:700;font-size:15px;margin-top:4px}
+#tch{font-weight:800;font-size:16px;color:var(--leaf)}
+#app{max-width:760px;margin:0 auto;padding:8px 16px 40px}
+.card{background:var(--card);border:3px solid var(--line);border-radius:22px;padding:18px;margin-bottom:16px}
+h1{font-size:28px;margin:6px 0;color:var(--leaf);font-weight:800}
+h2{font-size:23px;margin:0 0 8px;font-weight:800}
+h3{font-size:20px;margin:0 0 10px}
+label{display:block;font-weight:700;margin-top:12px}
+input,select{font:inherit;width:100%;padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink)}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:16px;padding:11px 20px;background:var(--leaf);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.25);margin:4px}
+button:active{transform:translateY(3px);box-shadow:none}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid var(--sun)}
+.opt{display:block;width:100%;text-align:right;background:var(--card);color:var(--ink);border:3px solid var(--line);box-shadow:none;margin:8px 0}
+.opt.sel{border-color:var(--leaf);background:var(--sky)}
+.opt.good{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.fb{font-weight:800;min-height:30px;margin:6px 0 0}
+.fb.g{color:var(--leaf)}.fb.b{color:var(--bad)}
+.pop{animation:pop .4s}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+.scene{background:linear-gradient(var(--sky) 0 70%,#c9a36a 70%);border-radius:18px;padding:8px;display:flex;justify-content:space-around;align-items:flex-end;flex-wrap:wrap;position:relative;min-height:230px}
+.slot{text-align:center;font-weight:700;font-size:16px}
+.slot svg{width:150px;height:170px}
+.tag{display:inline-block;padding:2px 12px;border-radius:12px;background:var(--sun);color:#3b2a1a;margin-top:2px}
+.tbl{width:100%;border-collapse:collapse;font-size:15px;margin-top:10px}
+.tbl th,.tbl td{border:2px solid var(--line);padding:5px;text-align:center}
+.tbl th{background:var(--leaf);color:#fff}
+.tbl select{padding:4px;font-size:14px;border-width:2px}
+.tbl select.ok{background:#b9ecc3;color:#123}
+.tbl select.no{background:#ffc9bf;color:#123}
+.wrap{overflow-x:auto}
+.items{display:flex;gap:10px;flex-wrap:wrap}
+.drop{background:#fff1;font-size:34px}
+.tray{min-height:70px;border:3px dashed var(--line);border-radius:16px;padding:8px;margin-top:8px;font-size:30px}
+#cert{background:#fffdf3;color:#3b2a1a;border:10px double #d79b1d;border-radius:12px;padding:22px;text-align:center}
+#cert h1{color:#b3470f;font-size:32px}
+.nm{font-size:32px;font-weight:800;color:#2f9e44;border-bottom:3px dotted #d79b1d;display:inline-block;padding:0 20px;margin:6px 0}
+.stars{font-size:38px;letter-spacing:4px}
+.sig{display:flex;justify-content:space-around;margin-top:22px;font-weight:700}
+.sig span{border-top:2px solid #3b2a1a;padding:4px 30px}
+@media print{body *{visibility:hidden}#cert,#cert *{visibility:visible}#cert{position:absolute;inset:0;margin:0}#top{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="top"><div id="track"><div id="bar"></div></div><div id="lbl"></div><div id="tch"></div></div>
+<main id="app"></main>
+<script>
+const app=document.getElementById('app'),bar=document.getElementById('bar'),lbl=document.getElementById('lbl');
+const S={name:'',cls:'',teacher:'',pred:'',ok:0,tot:0,missed:[],salty:0,cells:{}};
+const NAMES=['التسجيل','أتوقّع','تحضير المواد','وضع النبتتين','أستخدم المتغيرات','أسقي وأُلاحظ','أستخلص النتائج','أستكشف أكثر','الشهادة'];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const beep=(f=660)=>{try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.18)}catch(e){}};
+const PRAISE=['أحسنتِ!','ممتاز!','رائع يا عالمة!','عمل جميل!'];
+function screen(n,html){bar.style.width=((n+1)/NAMES.length*100)+'%';lbl.textContent='الخطوة '+(n+1)+' من '+NAMES.length+': '+NAMES[n];document.getElementById('tch').textContent=S.teacher?'👩‍🏫 المعلمة: '+S.teacher:'';app.innerHTML=html;scrollTo(0,0);return app}
+function box(){const d=document.createElement('div');d.className='card';app.appendChild(d);return d}
+
+/* سؤال اختيار من متعدد؛ q={t,o:[[نص,صحيح]],h:تلميح,m:متعدد} */
+function ask(c,q,done,o={}){
+  const d=document.createElement('div');d.innerHTML='<h3>'+q.t+'</h3><div class="os"></div><p class="fb" aria-live="polite"></p>';
+  c.appendChild(d);const os=d.querySelector('.os'),fb=d.querySelector('.fb');let first=true,fin=false;
+  const finish=()=>{fin=true;fb.className='fb g pop';fb.textContent=o.free?'توقّع جميل! لنختبره بالتجربة.':PRAISE[Math.floor(Math.random()*4)];beep(784);
+    if(!o.free){if(o.retry){S.ok++}else{S.tot++;if(first)S.ok++;else S.missed.push(q)}}setTimeout(done,1000)};
+  const wrong=()=>{first=false;fb.className='fb b';fb.textContent='حاولي مرة أخرى. تلميح: '+q.h;beep(220)};
+  if(q.m){
+    shuffle(q.o).forEach(([t,ok])=>{const b=document.createElement('button');b.className='opt';b.dataset.ok=ok?1:0;b.textContent=t;b.onclick=()=>b.classList.toggle('sel');os.appendChild(b)});
+    const g=document.createElement('button');g.textContent='تحقّقي';g.onclick=()=>{if(fin)return;const bs=[...os.children];
+      if(bs.every(b=>(b.dataset.ok==1)==b.classList.contains('sel'))){bs.forEach(b=>b.disabled=true);finish()}else wrong()};d.appendChild(g);
+  }else{
+    shuffle(q.o).forEach(([t,ok])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;
+      b.onclick=()=>{if(fin)return;if(o.free||ok){b.classList.add('good');[...os.children].forEach(x=>x.disabled=true);if(o.free)S.pred=t;finish()}else{b.classList.add('wrong');b.disabled=true;wrong()}};os.appendChild(b)});
+  }
+}
+function chain(c,qs,done){let i=0;(function nx(){if(i>=qs.length)return done();ask(c,qs[i++],nx)})()}
+
+/* رسم النبتة والأصيص */
+const STATES=[{d:0,c:'#3fa34d'},{d:.35,c:'#8dc34a'},{d:.65,c:'#cdbb3a'},{d:1,c:'#8a6a3b'}];
+function pot(plant,st,salty){
+  let p='';
+  if(plant){const d=st.d,y=62+d*34;
+    p='<path d="M80 118 Q'+(80+d*14)+' 90 '+(80+d*22)+' '+(55+d*22)+'" stroke="'+(d>.8?'#8a6a3b':'#2f8a3c')+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<ellipse cx="'+(58-d*4)+'" cy="'+(88+d*16)+'" rx="26" ry="9" fill="'+st.c+'" transform="rotate('+(-25+d*75)+' '+(58-d*4)+' '+(88+d*16)+')"/>'+
+    '<ellipse cx="'+(102+d*4)+'" cy="'+(84+d*18)+'" rx="26" ry="9" fill="'+st.c+'" transform="rotate('+(25-d*75)+' '+(102+d*4)+' '+(84+d*18)+')"/>'+
+    '<circle cx="'+(80+d*22)+'" cy="'+(52+d*22)+'" r="'+(13-d*6)+'" fill="'+(d<.5?'#ff8a1f':'#b98a4a')+'"/>';}
+  const crust=salty?'<circle cx="62" cy="123" r="3" fill="#fff"/><circle cx="82" cy="121" r="3" fill="#fff"/><circle cx="100" cy="124" r="3" fill="#fff"/><circle cx="72" cy="126" r="2.5" fill="#fff"/><circle cx="92" cy="126" r="2.5" fill="#fff"/>':'';
+  return '<svg viewBox="0 0 160 190" role="img" aria-hidden="true">'+p+'<path d="M38 120 H122 L112 178 Q80 186 48 178 Z" fill="#c2492f"/><rect x="34" y="112" width="92" height="16" rx="6" fill="#d9583a"/><ellipse cx="80" cy="121" rx="42" ry="6" fill="#5b3a21"/>'+crust+'</svg>';
+}
+function scene(plants,day,salts,tags){
+  return '<div class="scene">'+[0,1].map(i=>{const sa=salts&&S.salty===i;
+    return '<div class="slot">'+pot(plants[i],sa?STATES[day||0]:STATES[0],sa&&salts)+(tags&&salts!==null?'<span class="tag">'+(sa?'تربة مالحة':'تربة غير مالحة')+'</span>':'')+'</div>'}).join('')+'</div>';
+}
+
+/* ١: التسجيل */
+function s1(){
+  const c=screen(0,'<div class="card"><h1>🌱 مختبر النباتات الصغير</h1><h2>كيف يؤثر تغيّر النظام البيئي في المخلوقات الحية؟</h2><p>سجّلي بياناتك لتبدئي التجربة وتحصلي على شهادتك.</p><label for="t">👩‍🏫 اسم المعلمة</label><input id="t" autocomplete="off">'+
+  '<label for="n">اسم الطالبة</label><input id="n" autocomplete="off">'+
+  '<label for="k">الصف</label><select id="k"><option value="">اختاري صفك</option><option>رابع/١</option><option>رابع/٢</option><option>رابع/٣</option><option>رابع/٤</option><option>رابع/٥</option></select>'+
+  '<p class="fb b" id="e"></p><button id="go">ابدئي التجربة</button></div>');
+  document.getElementById('go').onclick=()=>{const n=document.getElementById('n').value.trim(),k=document.getElementById('k').value,t=document.getElementById('t').value.trim();
+    if(!n||!k||!t){document.getElementById('e').textContent='أكملي الاسم والصف واسم المعلمة أولًا.';return}
+    Object.assign(S,{name:n,cls:k,teacher:t,ok:0,tot:0,missed:[],cells:{}});s2()};
+}
+/* ٢: أتوقّع */
+function s2(){
+  screen(1,'');const c=box();
+  c.innerHTML='<h2>أهلًا '+S.name+'! 👋</h2><p>سؤال التجربة: ما تأثير تغيّر خصائص التربة في النباتات المزروعة فيها؟</p>';
+  ask(c,{t:'أتوقّع: إذا تغيّرت خصائص التربة في النظام البيئي فإن النباتات المزروعة فيها...',o:[['لن تتأثر إطلاقًا',0],['ستتأثر وقد يتغير شكل أوراقها ولونها',1],['ستنمو أسرع دائمًا',0],['ستتحول إلى حيوانات',0]]},s3,{free:1});
+}
+/* ٣: المواد */
+function s3(){
+  screen(2,'');const c=box();c.innerHTML='<h2>أحتاج إلى...</h2>';
+  ask(c,{m:1,t:'اختاري كل المواد التي يلزمني استخدامها (يمكنك اختيار أكثر من مادة):',h:'أحتاج نباتين متماثلين وملحًا وماءً فقط.',o:[['أصيصان فيهما نباتان متماثلان',1],['ملح طعام',1],['ماء',1],['سكر',0],['حصى',0],['مصباح',0]]},()=>{
+    const d=box();d.innerHTML='<h3>اضغطي على كل مادة لتضعيها على طاولة التجربة:</h3><div class="items" id="it"></div><div class="tray" id="tr" aria-label="طاولة التجربة"></div><button id="nx" disabled>التالي</button>';
+    let n=0;[['🪴','أصيصان'],['🧂','ملح طعام'],['💧','ماء']].forEach(([e,t])=>{const b=document.createElement('button');b.textContent=e+' '+t;b.onclick=()=>{b.disabled=true;document.getElementById('tr').append(e+' ');beep(500);if(++n==3){document.getElementById('nx').disabled=false}};d.querySelector('#it').appendChild(b)});
+    d.querySelector('#nx').onclick=s4;
+  });
+}
+/* ٤: وضع النبتتين */
+function s4(){
+  screen(3,'');const c=box();c.innerHTML='<h2>أضع النبتتين</h2>';
+  ask(c,{t:'أين أضع النبتتين؟',h:'يجب أن تكون الظروف متماثلة للنبتتين.',o:[['في مكان مظلم تمامًا',0],['قرب النافذة في الظروف نفسها',1],['نبتة قرب النافذة وأخرى في الثلاجة',0]]},()=>{
+    const d=box();let np=[0,0];
+    const draw=()=>{d.innerHTML='<h3>اضغطي على كل أصيص لتضعي فيه نبتة، قرب النافذة 🪟</h3>'+scene(np,0,null,false)+'<div style="text-align:center"><button id="a">ضعي نبتة في الأصيص الأيمن</button><button id="b">ضعي نبتة في الأصيص الأيسر</button></div>'+(np[0]&&np[1]?'<button id="nx">التالي</button>':'');
+      const a=d.querySelector('#a'),b=d.querySelector('#b');a.disabled=!!np[0];b.disabled=!!np[1];
+      a.onclick=()=>{np[0]=1;beep(560);draw()};b.onclick=()=>{np[1]=1;beep(560);draw()};
+      if(d.querySelector('#nx'))d.querySelector('#nx').onclick=()=>s5(np)};
+    draw();});
+}
+/* ٥: المتغيرات */
+function s5(np){
+  screen(4,'');const c=box();c.innerHTML='<h2>أستخدم المتغيرات</h2>';
+  chain(c,[
+    {t:'كم جرامًا من ملح الطعام أضيف إلى أحد الأصيصين؟',h:'المكتوب في الكتاب هو ١٠٠ جرام.',o:[['١٠ جرامات',0],['٥٠ جرامًا',0],['١٠٠ جرام',1],['٥٠٠ جرام',0]]},
+    {t:'ما المتغير الذي أغيّره في التجربة؟',h:'أغيّر شيئًا واحدًا فقط بين الأصيصين.',o:[['كمية الماء',0],['وجود الملح في التربة',1],['نوع النبات',0],['مكان الأصيص',0]]}
+  ],()=>{
+    const d=box();d.innerHTML='<h3>اختاري أصيصًا واحدًا لأضيف إليه ١٠٠ جرام من الملح 🧂 وأترك الآخر بلا ملح:</h3>'+scene(np,0,null,false)+'<div style="text-align:center"><button id="a">ملح في الأيمن</button><button id="b">ملح في الأيسر</button></div>';
+    const go=i=>{S.salty=i;beep(600);d.innerHTML='<h3>ممتاز! الآن أصبح لدينا أصيصان:</h3>'+scene(np,0,true,true)+'<button id="nx">التالي</button>';d.querySelector('#nx').onclick=()=>s6(np,0)};
+    d.querySelector('#a').onclick=()=>go(0);d.querySelector('#b').onclick=()=>go(1);
+  });
+}
+/* ٦: السقي والملاحظة (٤ أيام) */
+const SHAPE=['منتصبة سليمة','ذابلة','متجعدة','متدلية'],COLOR=['أخضر','أخضر فاتح','مصفرّ','بنّي'];
+const ANS=d=>({h:['منتصبة سليمة','أخضر'],s:[['منتصبة سليمة','أخضر'],['ذابلة','أخضر فاتح'],['ذابلة','مصفرّ'],['متدلية','بنّي']][d]});
+const DAYN=['الأول','الثاني','الثالث','الرابع'];
+function s6(np,day){
+  screen(5,'');const c=box();
+  if(day===0){c.innerHTML='<h2>أسقي وأُلاحظ</h2>';
+    chain(c,[
+      {t:'لماذا أروي النبتتين بكميات متساوية من الماء؟',h:'أريد أن أعرف السبب الوحيد للفرق بينهما.',o:[['لأضمن أن الفرق بينهما سببه الملح فقط',1],['لأن الماء مفيد',0],['لتنمو النبتتان بالطول نفسه',0],['لا يوجد سبب',0]]},
+      {t:'كم يومًا أروي النبتتين وألاحظ التغيرات؟',h:'عدد الأيام مكتوب في خطوات الكتاب.',o:[['يوم واحد',0],['يومان',0],['٤ أيام',1],['٤٠ يومًا',0]]}
+    ],()=>days(np,0))}else days(np,day);
+}
+function days(np,day){
+  const c=box();let w=[0,0];
+  const draw=()=>{const both=w[0]&&w[1];
+    c.innerHTML='<h2>اليوم '+DAYN[day]+'</h2>'+scene(np,both?day:Math.max(day-1,0),true,true).replace('class="scene"','class="scene" id="sc"')+
+    '<div style="text-align:center"><button id="w0">🫗 اسقي النبتة اليمنى</button><button id="w1">🫗 اسقي النبتة اليسرى</button></div>'+(both?table(day):'<p>اسقي النبتتين بالكمية نفسها لتظهر نتيجة اليوم.</p>');
+    [0,1].forEach(i=>{const b=c.querySelector('#w'+i);b.disabled=!!w[i];b.onclick=()=>{w[i]=1;beep(450);const sc=c.querySelector('#sc');sc.insertAdjacentHTML('beforeend','<span style="position:absolute;font-size:34px;top:6px;'+(i?'left':'right')+':22%">💧💧💧</span>');setTimeout(draw,700)}});
+    if(both)wire();};
+  const sel=(id,arr)=>'<select id="'+id+'"><option value="">اختاري</option>'+arr.map(x=>'<option>'+x+'</option>').join('')+'</select>';
+  const table=day=>{let r='';
+    for(let d=0;d<day;d++){const a=ANS(d);r+='<tr><td>'+DAYN[d]+'</td><td>'+a.h[0]+'</td><td>'+a.h[1]+'</td><td>'+a.s[0]+'</td><td>'+a.s[1]+'</td></tr>'}
+    r+='<tr><td>'+DAYN[day]+'</td><td>'+sel('h0',SHAPE)+'</td><td>'+sel('h1',COLOR)+'</td><td>'+sel('s0',SHAPE)+'</td><td>'+sel('s1',COLOR)+'</td></tr>';
+    return '<p>أُلاحظ التغيرات وأسجّلها في الجدول:</p><div class="wrap"><table class="tbl"><tr><th rowspan="2">اليوم</th><th colspan="2">النبات في تربة غير مالحة</th><th colspan="2">النبات في تربة مالحة</th></tr><tr><th>شكل الورقة</th><th>لون الورقة</th><th>شكل الورقة</th><th>لون الورقة</th></tr>'+r+'</table></div><p class="fb" id="f" aria-live="polite"></p><button id="ck">تحقّقي</button><button id="nx" style="display:none">'+(day<3?'يوم جديد ☀️':'أنهيت التجربة')+'</button>'};
+  const wire=()=>{const a=ANS(day),exp={h0:a.h[0],h1:a.h[1],s0:a.s[0],s1:a.s[1]};
+    c.querySelector('#ck').onclick=()=>{let all=true;
+      Object.keys(exp).forEach(k=>{const el=c.querySelector('#'+k),key=day+k,good=el.value===exp[k];
+        if(!(key in S.cells)){if(el.value){S.cells[key]=good?1:0;S.tot++;if(good)S.ok++}}
+        el.className=good?'ok':(el.value?'no':'');if(!good)all=false});
+      const f=c.querySelector('#f');
+      if(all){f.className='fb g pop';f.textContent='أحسنتِ! ملاحظاتك دقيقة.';beep(784);c.querySelector('#ck').style.display='none';c.querySelector('#nx').style.display='';
+        Object.keys(exp).forEach(k=>c.querySelector('#'+k).disabled=true)}
+      else{f.className='fb b';f.textContent='حاولي مرة أخرى. تلميح: انظري إلى شكل الورقة ولونها في الصورة.';beep(220)}};
+    c.querySelector('#nx').onclick=()=>{day<3?s6(np,day+1):s7()}};
+  draw();
+}
+/* ٧: أستخلص النتائج */
+function s7(){
+  screen(6,'');const c=box();c.innerHTML='<h2>أستخلص النتائج</h2>';
+  chain(c,[
+    {t:'أقارن: ما الفرق بين أوراق النبتتين؟',h:'تذكّري ما سجّلتِه في اليوم الرابع.',o:[['لا فرق',0],['أوراق النبتة في التربة المالحة ذابلة ومصفرّة والأخرى سليمة خضراء',1],['أوراق النبتة المالحة أكثر خضرة',0],['أوراق إحداهما أكبر حجمًا فقط',0]]},
+    {t:'أستنتج: هل تأثرت النباتات بالتغيرات في خصائص التربة؟',h:'قارني النبتتين مرة أخرى.',o:[['نعم، تغيّر الملح في التربة أثّر في شكل الأوراق ولونها',1],['لا، لم يحدث شيء',0],['تأثرت النبتتان بالشكل نفسه',0],['لا أستطيع أن أعرف',0]]},
+    {t:'لماذا ذبلت النبتة في التربة المالحة؟',h:'الملح يؤثر في الماء الموجود حول الجذور.',o:[['لأن الملح يسحب الماء من جذورها فلا تستفيد منه',1],['لأنها لم تأخذ ضوءًا',0],['لأنها تحب التربة الجافة',0],['لأن الأصيص صغير',0]]}
+  ],()=>{
+    const d=box();d.innerHTML='<p>🔬 <b>تفسير علمي:</b> الملح في التربة يسحب الماء من جذور النبات (الخاصية الأسموزية)، فيقل الماء الذي تستفيد منه الأوراق فتذبل وتصفرّ.</p><p>توقّعك في البداية كان: <b>«'+S.pred+'»</b></p>';
+    ask(d,{t:'هل كان توقعي صحيحًا؟',o:[['نعم، وافقت نتيجتي توقعي',1],['جزئيًا',1],['لا، وسأعدّل توقعي وأجرّب مرة أخرى',1]]},()=>{const b=document.createElement('button');b.textContent='التالي';b.onclick=s8;d.appendChild(b)},{free:1});
+  });
+}
+/* ٨: أستكشف أكثر */
+function s8(){
+  screen(7,'');const c=box();c.innerHTML='<h2>أستكشف أكثر</h2>';
+  chain(c,[
+    {t:'هل يمكن أن يؤثر تغيّر خصائص التربة في الحيوانات التي تعيش في النظام البيئي؟',h:'فكّري في غذاء الحيوانات ومأواها.',o:[['نعم، لأن الحيوانات تعتمد على النباتات في غذائها ومأواها',1],['لا، الحيوانات لا علاقة لها بالتربة',0],['فقط الحيوانات الكبيرة تتأثر',0],['فقط الطيور تتأثر',0]]},
+    {t:'أصمّم تجربتي: أي تصميم أنسب لاختبار تأثير التربة في ديدان الأرض؟',h:'أقارن بين مجموعتين تختلفان في شيء واحد فقط.',o:[['أضع الديدان في تربة عادية وأخرى مالحة بالظروف نفسها وأقارن عددها وحركتها بعد أيام',1],['أضعها كلها في تربة مالحة فقط',0],['أضع واحدة في التربة وأخرى في الماء',0],['أترك التجربة بلا ملاحظة',0]]}
+  ],()=>{const d=box();const b=document.createElement('button');b.textContent='عرض نتيجتي';b.onclick=finish;d.appendChild(b)});
+}
+function finish(){
+  const p=S.ok/S.tot;
+  if(p>=.7)return cert(p);
+  if(!S.missed.length)return cert(p);
+  screen(7,'');const c=box();c.innerHTML='<h2>لنراجع معًا 💪</h2><p>نتيجتك '+Math.round(p*100)+'٪. أعيدي الأسئلة التي أخطأتِ فيها لتحصلي على شهادتك.</p>';
+  const list=S.missed.splice(0);let i=0;(function nx(){if(i>=list.length){const b=document.createElement('button');b.textContent='عرض الشهادة';b.onclick=()=>cert(Math.max(S.ok/S.tot,.7));c.appendChild(b);return}ask(c,list[i++],nx,{retry:1})})();
+}
+/* ٩: الشهادة */
+function cert(p){
+  const st=Math.max(1,Math.min(5,Math.round(p*5)));
+  const dt=new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  screen(8,'<div id="cert" class="pop"><div style="font-size:54px">🏅</div><h1>شهادة إتمام تجربة علمية</h1><p>تشهد المعلمة بأن الطالبة</p><div class="nm">'+S.name+'</div><p>من الصف <b>'+S.cls+'</b><br>قد أتمّت بنجاح تجربة<br><b>«كيف يؤثر تغيّر النظام البيئي في المخلوقات الحية؟»</b></p><div class="stars" aria-label="'+st+' من ٥ نجوم">'+'⭐'.repeat(st)+'☆'.repeat(5-st)+'</div><p>التاريخ: '+dt+'<br>تحت إشراف المعلمة: <b>'+S.teacher+'</b></p><div class="sig"><span>توقيع المعلمة</span></div></div><div style="text-align:center;margin-top:16px"><button onclick="print()">🖨️ طباعة / حفظ PDF</button><button onclick="s1()" style="background:var(--soil)">↻ إعادة التجربة</button></div>');
+  beep(880);setTimeout(()=>beep(1040),200);
+}
+function s1(){
+  S.teacher='نوال المالكي';S.cls='الرابع';
+  screen(0,'<div class="card" style="text-align:center"><div style="font-weight:800;color:var(--soil)">أستكشف: نشاط استقصائي</div><h1>كيف يؤثر تغيّر النظام البيئي في المخلوقات الحية؟</h1><p style="margin:4px 0 14px"><b>المعلمة: نوال المالكي</b><br><b>الصف الرابع</b></p><label for="n" style="text-align:right">اسم الطالبة</label><input id="n" autocomplete="off" placeholder="اكتبي اسمك هنا"><p class="fb b" id="e"></p><button id="go">ابدئي التجربة</button></div>');
+  document.getElementById('go').onclick=()=>{const n=document.getElementById('n').value.trim();
+    if(!n){document.getElementById('e').textContent='اكتبي اسمك أولًا.';return}
+    Object.assign(S,{name:n,ok:0,tot:0,missed:[],cells:{}});s2()};
+}
+function pot(plant,st,salty){
+  let p='';
+  if(plant){const d=st.d,tx=80+d*26,ty=56+d*34,Q=(a,b,c,t)=>(1-t)*(1-t)*a+2*(1-t)*t*b+t*t*c,pt=t=>[Q(80,80,tx,t),Q(120,86,ty,t)],ang=-30+d*100,ry=10-d*4,dark=d>.8?'#8a6a3b':'#2f8a3c';
+    const leaf=(b,side,k)=>{const a=side>0?ang:180-ang,L=21*k;return '<g transform="translate('+b[0]+' '+b[1]+') rotate('+a+')"><ellipse cx="'+L+'" cy="0" rx="'+L+'" ry="'+(ry*k)+'" fill="'+st.c+'"/><line x1="0" y1="0" x2="'+(L*2)+'" y2="0" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>'+(d>.5?'<ellipse cx="'+(L*1.7)+'" cy="0" rx="'+(L*.3)+'" ry="'+(ry*k*.6)+'" fill="#6b4a22" opacity=".6"/>':'')+'</g>'};
+    const b1=pt(.5),b2=pt(.78);
+    p='<path d="M80 120 Q80 86 '+tx+' '+ty+'" stroke="'+dark+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+leaf(b1,1,1.1)+leaf(b1,-1,1.1)+leaf(b2,1,.85)+leaf(b2,-1,.85)+'<circle cx="'+tx+'" cy="'+(ty-4)+'" r="'+(13-d*5)+'" fill="'+(d<.5?'#ff8a1f':'#b98a4a')+'"/>';}
+  const crust=salty?'<circle cx="62" cy="123" r="3" fill="#fff"/><circle cx="82" cy="121" r="3" fill="#fff"/><circle cx="100" cy="124" r="3" fill="#fff"/><circle cx="72" cy="126" r="2.5" fill="#fff"/><circle cx="92" cy="126" r="2.5" fill="#fff"/>':'';
+  return '<svg viewBox="0 0 160 190" role="img" aria-hidden="true"><path d="M38 120 H122 L112 178 Q80 186 48 178 Z" fill="#c2492f"/><rect x="34" y="112" width="92" height="16" rx="6" fill="#d9583a"/><ellipse cx="80" cy="121" rx="42" ry="6" fill="#5b3a21"/>'+crust+p+'</svg>';
+}
+function cert(p){
+  const st=Math.max(1,Math.min(5,Math.round(p*5)));
+  const dt=new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  screen(8,'<div id="cert" class="pop"><div style="font-size:54px">🏅</div><h1 style="font-size:26px">شهادة إتمام تجربة<br>«كيف يؤثر تغيّر النظام البيئي في المخلوقات الحية؟»</h1><p>تشهد المعلمة بأن الطالبة</p><div class="nm">'+S.name+'</div><p>من الصف <b>'+S.cls+'</b><br>قد أتمّت بنجاح هذه التجربة</p><div class="stars" aria-label="'+st+' من ٥ نجوم">'+'⭐'.repeat(st)+'☆'.repeat(5-st)+'</div><p>التاريخ: '+dt+'<br>تحت إشراف المعلمة: <b>'+S.teacher+'</b></p></div><div style="text-align:center;margin-top:16px"><button onclick="print()">🖨️ طباعة / حفظ PDF</button><button onclick="s1()" style="background:var(--soil)">↻ إعادة التجربة</button></div>');
+  beep(880);setTimeout(()=>beep(1040),200);
+}
+s1();
+</script>
+</body>
+</html>
